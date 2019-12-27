@@ -1,48 +1,31 @@
 <template>
   <v-alert
-    :color="computedColor"
-    :icon="computedIcon"
-    :value="true"
-    class="app-alert mb-3"
+    :class="$vuetify.theme.dark ? undefined : 'grey lighten-3'"
+    :type="value"
+    border="left"
+    class="app-alert mb-4"
+    colored-border
+    value
   >
-    <doc-markdown><slot /></doc-markdown>
+    <base-markdown><slot /></base-markdown>
   </v-alert>
 </template>
 
 <script>
-  const iconMap = {
-    error: 'warning',
-    info: 'info',
-    success: 'check_circle',
-    warning: 'priority_high'
-  }
-
   export default {
     name: 'AppAlert',
 
     props: {
       value: {
         type: String,
-        default: ''
-      }
-    },
-
-    computed: {
-      computedColor () {
-        return this.value
+        default: '',
       },
-      computedIcon () {
-        return iconMap[this.computedColor]
-      }
-    }
+    },
   }
 </script>
 
-<style lang="stylus">
-  .app-alert
-    a
-      color: #fff
-
-    p
-      margin: 0 !important
+<style lang="sass">
+.app-alert
+  p
+    margin: 0 !important
 </style>

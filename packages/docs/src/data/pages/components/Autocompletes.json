@@ -1,6 +1,11 @@
 {
   "title": "header",
   "titleText": "headerText",
+  "file": "components/VAutocomplete",
+  "mdSpec": {
+    "version": "1",
+    "link": "https://material.io/archive/guidelines/components/text-fields.html"
+  },
   "children": [
     {
       "type": "section",
@@ -8,6 +13,11 @@
         {
           "type": "usage",
           "value": "usage"
+        },
+        {
+          "type": "alert",
+          "lang": "Components.Selects.objectAlert",
+          "value": "error"
         }
       ]
     },
@@ -24,12 +34,13 @@
       "type": "section",
       "children": [
         {
-          "type": "supplemental",
-          "value": [
-            {
-              "type": "components-mask-table"
-            }
-          ]
+          "type": "playground",
+          "value": "playground"
+        },
+        {
+          "type": "alert",
+          "lang": "Components.Selects.autocompleteAlert",
+          "value": "info"
         }
       ]
     },
@@ -38,7 +49,15 @@
       "children": [
         {
           "type": "examples",
-          "value": [ "api", "scopedSlots", "customFilter", "asynchronous", "advanced" ]
+          "value": [
+            "simple/api",
+            "simple/customFilter",
+            "simple/dense",
+            "intermediate/slots",
+            "intermediate/asynchronous",
+            "intermediate/advanced",
+            "complex/stateSelector"
+          ]
         }
       ]
     },

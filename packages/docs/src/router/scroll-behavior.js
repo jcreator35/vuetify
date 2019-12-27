@@ -1,11 +1,11 @@
-import goTo from 'vuetify/es5/components/Vuetify/goTo'
+import goTo from 'vuetify/es5/services/goto'
 import { waitForReadystate } from '../util/helpers'
 
 export default async function (to, from, savedPosition) {
   await waitForReadystate()
 
-  let scrollTo = 0
   const options = {}
+  let scrollTo = 0
 
   if (to.hash) {
     scrollTo = to.hash
@@ -15,13 +15,19 @@ export default async function (to, from, savedPosition) {
 
   return new Promise(resolve => {
     setTimeout(() => {
-      try {
-        goTo(scrollTo, options)
-      } catch (err) {
-        console.log(err)
+      if (typeof window === 'undefined') {
+        return resolve()
       }
 
-      resolve()
-    }, 100)
+      window.requestAnimationFrame(() => {
+        try {
+          goTo(scrollTo, options)
+        } catch (err) {
+          console.log(err)
+        }
+
+        resolve()
+      })
+    }, 200)
   })
 }

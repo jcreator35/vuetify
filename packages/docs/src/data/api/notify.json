@@ -1,9 +1,9 @@
 {
-  "color": "default",
+  "color": "green",
   "close": true,
-  "id": "posts/25960280",
-  "text": "Go to Video",
-  "msg": "⚡ March 2019 **Framework Update Video**",
-  "href": "https://www.patreon.com/posts/25960280",
+  "id": "new-store",
+  "text": "Check it Out",
+  "msg": "💖 New Vuetify Store in Beta 🛒",
+  "href": "https://store-beta.vuetifyjs.com/",
   "timeout": 0
 }

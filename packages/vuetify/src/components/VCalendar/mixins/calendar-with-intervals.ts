@@ -13,7 +13,7 @@ import {
   updateMinutes,
   createDayList,
   createIntervalList,
-  createNativeLocaleFormatter
+  createNativeLocaleFormatter,
 } from '../util/timestamp'
 
 /* @vue/component */
@@ -64,22 +64,22 @@ export default CalendarBase.extend({
         return this.intervalFormat as VTimestampFormatter
       }
 
-      const longOptions = { timeZone: 'UTC', hour12: true, hour: '2-digit', minute: '2-digit' }
-      const shortOptions = { timeZone: 'UTC', hour12: true, hour: 'numeric', minute: '2-digit' }
-      const shortHourOptions = { timeZone: 'UTC', hour12: true, hour: 'numeric' }
+      const longOptions = { timeZone: 'UTC', hour: '2-digit', minute: '2-digit' }
+      const shortOptions = { timeZone: 'UTC', hour: 'numeric', minute: '2-digit' }
+      const shortHourOptions = { timeZone: 'UTC', hour: 'numeric' }
 
       return createNativeLocaleFormatter(
-        this.locale,
+        this.currentLocale,
         (tms, short) => short ? (tms.minute === 0 ? shortHourOptions : shortOptions) : longOptions
       )
-    }
+    },
   },
 
   methods: {
     showIntervalLabelDefault (interval: VTimestamp): boolean {
       const first: VTimestamp = this.intervals[0][0]
       const isFirst: boolean = first.hour === interval.hour && first.minute === interval.minute
-      return !isFirst && interval.minute === 0
+      return !isFirst
     },
     intervalStyleDefault (_interval: VTimestamp): object | undefined {
       return undefined
@@ -141,6 +141,6 @@ export default CalendarBase.extend({
       }
 
       return y
-    }
-  }
+    },
+  },
 })
