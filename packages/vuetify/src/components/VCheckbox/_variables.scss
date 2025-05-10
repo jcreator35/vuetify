@@ -1,3 +1,5 @@
-@import '../../styles/styles.sass';
+@use '../../styles/settings';
 
-$checkbox-disabled-opacity: .6 !default;
+$checkbox-flex: 0 1 auto !default;
+$checkbox-disabled-color: rgba(var(--v-theme-on-surface), var(--v-disabled-opacity)) !default;
+$checkbox-error-color: rgb(var(--v-theme-error)) !default;

@@ -1,57 +1,79 @@
-import { VNodeDirective } from 'vue/types/vnode'
+// Utilities
+import { SUPPORTS_INTERSECTION } from '@/util'
 
-interface ObserveVNodeDirective extends VNodeDirective {
-  options?: IntersectionObserverInit
+// Types
+import type {
+  DirectiveBinding,
+} from 'vue'
+
+type ObserveHandler = (
+  isIntersecting: boolean,
+  entries: IntersectionObserverEntry[],
+  observer: IntersectionObserver,
+) => void
+
+export interface ObserveDirectiveBinding extends Omit<DirectiveBinding, 'modifiers' | 'value'> {
+  value?: ObserveHandler | { handler: ObserveHandler, options?: IntersectionObserverInit }
+  modifiers: {
+    once?: boolean
+    quiet?: boolean
+  }
 }
 
-function inserted (el: HTMLElement, binding: ObserveVNodeDirective) {
-  const modifiers = binding.modifiers || /* istanbul ignore next */ {}
+function mounted (el: HTMLElement, binding: ObserveDirectiveBinding) {
+  if (!SUPPORTS_INTERSECTION) return
+
+  const modifiers = binding.modifiers || {}
   const value = binding.value
-  const isObject = typeof value === 'object'
-  const callback = isObject ? value.handler : value
+  const { handler, options } = typeof value === 'object'
+    ? value
+    : { handler: value, options: {} }
+
   const observer = new IntersectionObserver((
     entries: IntersectionObserverEntry[] = [],
     observer: IntersectionObserver
   ) => {
-    /* istanbul ignore if */
-    if (!el._observe) return // Just in case, should never fire
+    const _observe = el._observe?.[binding.instance!.$.uid]
+    if (!_observe) return // Just in case, should never fire
+
+    const isIntersecting = entries.some(entry => entry.isIntersecting)
 
     // If is not quiet or has already been
     // initted, invoke the user callback
     if (
-      callback && (
+      handler && (
         !modifiers.quiet ||
-        el._observe.init
+        _observe.init
+      ) && (
+        !modifiers.once ||
+        isIntersecting ||
+        _observe.init
       )
     ) {
-      const isIntersecting = Boolean(entries.find(entry => entry.isIntersecting))
-
-      callback(entries, observer, isIntersecting)
+      handler(isIntersecting, entries, observer)
     }
 
-    // If has already been initted and
-    // has the once modifier, unbind
-    if (el._observe.init && modifiers.once) unbind(el)
-    // Otherwise, mark the observer as initted
-    else (el._observe.init = true)
-  }, value.options || {})
+    if (isIntersecting && modifiers.once) unmounted(el, binding)
+    else _observe.init = true
+  }, options)
 
-  el._observe = { init: false, observer }
+  el._observe = Object(el._observe)
+  el._observe![binding.instance!.$.uid] = { init: false, observer }
 
   observer.observe(el)
 }
 
-function unbind (el: HTMLElement) {
-  /* istanbul ignore if */
-  if (!el._observe) return
+function unmounted (el: HTMLElement, binding: ObserveDirectiveBinding) {
+  const observe = el._observe?.[binding.instance!.$.uid]
+  if (!observe) return
 
-  el._observe.observer.unobserve(el)
-  delete el._observe
+  observe.observer.unobserve(el)
+  delete el._observe![binding.instance!.$.uid]
 }
 
 export const Intersect = {
-  inserted,
-  unbind,
+  mounted,
+  unmounted,
 }
 
 export default Intersect

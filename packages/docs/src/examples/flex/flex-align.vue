@@ -1,37 +1,68 @@
 <template>
   <div>
-    <v-card
-      v-for="a in align"
-      :key="a"
-      :class="`d-flex align-${a} mb-6`"
-      color="grey lighten-2"
-      flat
+    <v-sheet
+      class="d-flex align-start mb-6 bg-surface-variant"
       height="100"
-      tile
     >
-      <v-card
+      <v-sheet
         v-for="n in 3"
         :key="n"
-        class="pa-2"
-        outlined
-        tile
+        class="ma-2 pa-2"
       >
-        Flex item
-      </v-card>
-    </v-card>
+        align-start
+      </v-sheet>
+    </v-sheet>
+
+    <v-sheet
+      class="d-flex align-end mb-6 bg-surface-variant"
+      height="100"
+    >
+      <v-sheet
+        v-for="n in 3"
+        :key="n"
+        class="ma-2 pa-2"
+      >
+        align-end
+      </v-sheet>
+    </v-sheet>
+
+    <v-sheet
+      class="d-flex align-center mb-6 bg-surface-variant"
+      height="100"
+    >
+      <v-sheet
+        v-for="n in 3"
+        :key="n"
+        class="ma-2 pa-2"
+      >
+        align-center
+      </v-sheet>
+    </v-sheet>
+
+    <v-sheet
+      class="d-flex align-baseline mb-6 bg-surface-variant"
+      height="100"
+    >
+      <v-sheet
+        v-for="n in 3"
+        :key="n"
+        class="ma-2 pa-2"
+      >
+        align-baseline
+      </v-sheet>
+    </v-sheet>
+
+    <v-sheet
+      class="d-flex align-stretch mb-6 bg-surface-variant"
+      height="100"
+    >
+      <v-sheet
+        v-for="n in 3"
+        :key="n"
+        class="ma-2 pa-2"
+      >
+        align-stretch
+      </v-sheet>
+    </v-sheet>
   </div>
 </template>
-
-<script>
-  export default {
-    data: () => ({
-      align: [
-        'start',
-        'end',
-        'center',
-        'baseline',
-        'stretch',
-      ],
-    }),
-  }
-</script>

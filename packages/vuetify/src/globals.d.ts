@@ -1,39 +1,20 @@
-/* eslint-disable max-len */
+import 'vue/jsx'
 
-import {
-  VueConstructor,
-  ComponentOptions,
-  FunctionalComponentOptions,
-  VNodeData,
-} from 'vue'
-import { CombinedVueInstance, Vue } from 'vue/types/vue'
-import {
-  RecordPropsDefinition,
-  ThisTypedComponentOptionsWithArrayProps,
-  ThisTypedComponentOptionsWithRecordProps,
-} from 'vue/types/options'
-import { MetaInfo } from 'vue-meta/types'
-import { TouchStoredHandlers } from './directives/touch'
+// Types
+import type { ComponentInjectOptions, ComponentOptionsMixin, EmitsOptions, SlotsType } from 'vue'
+import type { ComputedOptions, Events, MethodOptions, VNode } from 'vue'
+import type { TouchStoredHandlers } from './directives/touch'
 
 declare global {
-  interface Window {
-    Vue: VueConstructor
-  }
-
-  interface HTMLCollection {
-    [Symbol.iterator] (): IterableIterator<Element>
-  }
-
   interface Element {
-    getElementsByClassName(classNames: string): NodeListOf<HTMLElement>
-  }
-
-  interface HTMLElement {
-    _clickOutside?: EventListenerOrEventListenerObject
-    _onResize?: {
-      callback: () => void
-      options?: boolean | AddEventListenerOptions
-    }
+    _clickOutside?: Record<number, {
+      onClick: EventListener
+      onMousedown: EventListener
+    } | undefined> & { lastMousedownWasOutside: boolean }
+    _onResize?: Record<number, {
+      handler: () => void
+      options: AddEventListenerOptions
+    } | undefined>
     _ripple?: {
       enabled?: boolean
       centered?: boolean
@@ -41,107 +22,146 @@ declare global {
       circle?: boolean
       touched?: boolean
       isTouch?: boolean
+      showTimer?: number
+      showTimerCommit?: (() => void) | null
     }
-    _observe?: {
+    _observe?: Record<number, {
       init: boolean
       observer: IntersectionObserver
-    }
-    _mutate?: {
+    } | undefined>
+    _mutate?: Record<number, {
       observer: MutationObserver
-    }
-    _onScroll?: {
-      callback: EventListenerOrEventListenerObject
-      options: boolean | AddEventListenerOptions
-      target: EventTarget
-    }
+    } | undefined>
+    _onScroll?: Record<number, {
+      handler: EventListenerOrEventListenerObject
+      options: AddEventListenerOptions
+      target?: EventTarget
+    } | undefined>
     _touchHandlers?: {
       [_uid: number]: TouchStoredHandlers
     }
+    _transitionInitialStyles?: {
+      position: string
+      top: string
+      left: string
+      width: string
+      height: string
+    }
+
+    getElementsByClassName(classNames: string): NodeListOf<HTMLElement>
   }
 
   interface WheelEvent {
     path?: EventTarget[]
   }
 
+  interface MouseEvent {
+    sourceCapabilities?: { firesTouchEvents: boolean }
+    shadowTarget?: EventTarget | null
+  }
+
+  interface ColorSelectionOptions {
+    signal?: AbortSignal
+  }
+
+  interface ColorSelectionResult {
+    sRGBHex: string
+  }
+
+  interface EyeDropper {
+    open: (options?: ColorSelectionOptions) => Promise<ColorSelectionResult>
+  }
+
+  interface EyeDropperConstructor {
+    new (): EyeDropper
+  }
+
+  interface Window {
+    EyeDropper: EyeDropperConstructor
+  }
+
   function parseInt(s: string | number, radix?: number): number
   function parseFloat(string: string | number): number
 
-  export type Dictionary<T> = Record<string, T>
-
   export const __VUETIFY_VERSION__: string
   export const __REQUIRED_VUE__: string
-}
+  export const __VUE_OPTIONS_API__: boolean | undefined
 
-declare module 'vue/types/vnode' {
-  export interface VNodeData {
-    model?: {
-      callback: (v: any) => void
-      expression: string
-      value: any
+  namespace JSX {
+    interface Element extends VNode {}
+    interface IntrinsicAttributes {
+      [name: string]: any
     }
   }
 }
 
-declare module 'vue/types/options' {
-  interface ComponentOptions<V extends Vue> {
-    head?: MetaInfo | (() => MetaInfo)
-  }
-}
-
-declare module 'vue/types/vue' {
-  export type OptionsVue<Instance extends Vue, Data, Methods, Computed, Props, Options = {}> = VueConstructor<
-    CombinedVueInstance<Instance, Data, Methods, Computed, Props> & Vue,
-    Options
-  >
-
-  export interface Vue {
-    _uid: number
-    _isDestroyed: boolean
-
-    /** bindObjectProps */
-    _b (
-      data: VNodeData,
-      tag: string,
-      value: Dictionary<any> | Dictionary<any>[],
-      asProp?: boolean,
-      isSync?: boolean
-    ): VNodeData
-
-    /** bindObjectListeners */
-     _g (data: VNodeData, value: {}): VNodeData
+declare module 'vue' {
+  export interface ComponentCustomProperties {
+    _: ComponentInternalInstance
   }
 
-  export interface RawComponentOptions<
-    V extends Vue = Vue,
-    Data = {} | undefined,
-    Methods = {} | undefined,
-    Computed = {} | undefined,
-    Props = {} | undefined
+  export interface ComponentInternalInstance {
+    provides: Record<string, unknown>
+    setupState: any
+  }
+
+  export interface FunctionalComponent {
+    aliasName?: string
+  }
+
+  export interface ComponentOptionsBase<
+    Props,
+    RawBindings,
+    D,
+    C extends ComputedOptions,
+    M extends MethodOptions,
+    Mixin extends ComponentOptionsMixin,
+    Extends extends ComponentOptionsMixin,
+    E extends EmitsOptions,
+    EE extends string = string,
+    Defaults = {},
+    I extends ComponentInjectOptions = {},
+    II extends string = string,
+    S extends SlotsType = {}
   > {
-    name?: string
-    data: Data
-    methods: Methods
-    computed: {
-      [C in keyof Computed]: (this: V) => Computed[C]
-    }
-    props: Props
+    aliasName?: string
   }
 
-  interface VueConstructor<
-    V extends Vue = Vue,
-    Options = Record<string, any>
-  > {
-    version: string
-    /* eslint-disable-next-line camelcase */
-    $_vuetify_subcomponents?: Record<string, VueConstructor>
-    /* eslint-disable-next-line camelcase */
-    $_vuetify_installed?: true
-    options: Options
-
-    extend<Data, Methods, Computed, Options, PropNames extends string = never> (options?: ThisTypedComponentOptionsWithArrayProps<V, Data, Methods, Computed, PropNames> & Options): OptionsVue<V, Data, Methods, Computed, Record<PropNames, any>, Options>
-    extend<Data, Methods, Computed, Props, Options> (options?: ThisTypedComponentOptionsWithRecordProps<V, Data, Methods, Computed, Props> & Options): OptionsVue<V, Data, Methods, Computed, Props, Options>
-    extend<Options, PropNames extends string = never> (definition: FunctionalComponentOptions<Record<PropNames, any>, PropNames[]> & Options): OptionsVue<V, {}, {}, {}, Record<PropNames, any>, Options>
-    extend<Props, Options> (definition: FunctionalComponentOptions<Props, RecordPropsDefinition<Props>> & Options): OptionsVue<V, {}, {}, {}, Props, Options>
-    extend<V extends Vue = Vue> (options?: ComponentOptions<V> & Options): OptionsVue<V, {}, {}, {}, {}, Options>
+  export interface App {
+    $nuxt?: { hook: (name: string, fn: () => void) => void }
   }
+
+  export interface VNode {
+    ctx: ComponentInternalInstance | null
+    ssContent: VNode | null
+  }
+
+  type UnionToIntersection<U> =
+    (U extends any ? (k: U) => void : never) extends ((k: infer I) => void) ? I : never
+
+  type Combine<T extends string> = T | {
+    [K in T]: {
+      [L in Exclude<T, K>]: `${K}${Exclude<T, K>}` | `${K}${L}${Exclude<T, K | L>}`
+    }[Exclude<T, K>]
+  }[T]
+
+  type Modifiers = Combine<'Passive' | 'Capture' | 'Once'>
+
+  type ModifiedEvents = UnionToIntersection<{
+    [K in keyof Events]: { [L in `${K}${Modifiers}`]: Events[K] }
+  }[keyof Events]>
+
+  type EventHandlers<E> = {
+    [K in keyof E]?: E[K] extends Function ? E[K] : (payload: E[K]) => void
+  }
+
+  export interface HTMLAttributes extends EventHandlers<ModifiedEvents> {
+    onScrollend?: (e: Event) => void
+  }
+
+  type CustomProperties = {
+    [k in `--${string}`]: any
+  }
+
+  export interface CSSProperties extends CustomProperties {}
 }

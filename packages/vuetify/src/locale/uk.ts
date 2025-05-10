@@ -1,5 +1,12 @@
 export default {
+  badge: 'Значок',
+  open: 'Відкрити',
   close: 'Закрити',
+  dismiss: 'Відхилити',
+  confirmEdit: {
+    ok: 'ОК',
+    cancel: 'Скасувати',
+  },
   dataIterator: {
     noResultsText: 'В результаті пошуку нічого не знайдено',
     loadingText: 'Завантаження...',
@@ -7,9 +14,12 @@ export default {
   dataTable: {
     itemsPerPageText: 'Рядків на сторінці:',
     ariaLabel: {
-      sortDescending: ': Відсортовано за спаданням. Активувати, щоб видалити сортування.',
-      sortAscending: ': Відсортовано за зростанням. Активувати, щоб відсортувати за спаданням.',
-      sortNone: ': Не відсортовано. Активувати, щоб відсортувати за зростанням.',
+      sortDescending: 'Відсортовано за спаданням.',
+      sortAscending: 'Відсортовано за зростанням.',
+      sortNone: 'Не відсортовано.',
+      activateNone: 'Активувати, щоб видалити сортування.',
+      activateDescending: 'Активувати, щоб відсортувати за спаданням.',
+      activateAscending: 'Активувати, щоб відсортувати за зростанням.',
     },
     sortBy: 'Відсортувати за',
   },
@@ -22,8 +32,20 @@ export default {
     lastPage: 'Остання сторінка',
     pageText: '{0}-{1} з {2}',
   },
+  dateRangeInput: {
+    divider: 'до',
+  },
   datePicker: {
-    itemsSelected: '{0} вибрано',
+    itemsSelected: 'Вибрано {0}',
+    range: {
+      title: 'Оберіть дати',
+      header: 'Введіть дати',
+    },
+    title: 'Оберіть дату',
+    header: 'Введіть дату',
+    input: {
+      placeholder: 'Введіть дату',
+    },
   },
   noDataText: 'Немає даних для відображення',
   carousel: {
@@ -35,13 +57,64 @@ export default {
   },
   calendar: {
     moreEvents: 'Ще {0}',
+    today: 'Сьогодні',
+  },
+  input: {
+    clear: 'Очистити {0}',
+    prependAction: '{0} попередня дія',
+    appendAction: '{0} наступна дія',
+    otp: 'Будь ласка, введіть символ OTP {0}',
   },
   fileInput: {
     counter: '{0} файлів',
     counterSize: '{0} файлів ({1} загалом)',
   },
+  fileUpload: {
+    title: 'Перетягніть файли сюди',
+    divider: 'або',
+    browse: 'Переглянути файли',
+  },
   timePicker: {
     am: 'AM',
     pm: 'PM',
+    title: 'Оберіть час',
+  },
+  pagination: {
+    ariaLabel: {
+      root: 'Навігація по сторінках',
+      next: 'Наступна сторінка',
+      previous: 'Попередня сторінка',
+      page: 'Перейти на сторінку {0}',
+      currentPage: 'Поточна сторінка, Сторінка {0}',
+      first: 'Перша сторінка',
+      last: 'Остання сторінка',
+    },
+  },
+  stepper: {
+    next: 'Далі',
+    prev: 'Назад',
+  },
+  rating: {
+    ariaLabel: {
+      item: 'Оцінка {0} з {1}',
+    },
+  },
+  loading: 'Завантаження...',
+  infiniteScroll: {
+    loadMore: 'Завантажити більше',
+    empty: 'Немає більше даних',
+  },
+  rules: {
+    required: 'Це поле є обов’язковим',
+    email: 'Будь ласка, введіть дійсну електронну адресу',
+    number: 'Це поле може містити лише цифри',
+    integer: 'Це поле може містити лише цілі числа',
+    capital: 'Це поле може містити лише великі літери',
+    maxLength: 'Ви повинні ввести максимум {0} символів',
+    minLength: 'Ви повинні ввести мінімум {0} символів',
+    strictLength: 'Довжина введеного поля є недійсною',
+    exclude: 'Символ {0} не дозволений',
+    notEmpty: 'Будь ласка, виберіть принаймні одне значення',
+    pattern: 'Недійсний формат',
   },
 }

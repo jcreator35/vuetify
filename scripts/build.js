@@ -1,16 +1,18 @@
-const spawn = require('cross-spawn')
+import { spawn } from 'cross-spawn'
 
 let target = process.argv[2]
 const alias = {
   api: '@vuetify/api-generator',
   docs: 'vuetifyjs.com',
-  kitchen: '@vuetify/kitchen',
   dev: 'vuetify',
 }
 target = alias[target] || target
 
+let result
 if (!target) {
-  spawn('yarn', ['lerna', 'run', 'build', '--stream'], { stdio: 'inherit' })
+  result = spawn.sync('pnpm', ['lerna', 'run', 'build', '--stream'], { stdio: 'inherit' })
 } else {
-  spawn('yarn', ['lerna', 'run', 'build', '--scope', target, '--stream'], { stdio: 'inherit' })
+  result = spawn.sync('pnpm', ['lerna', 'run', 'build', '--scope', target, '--stream', '--no-prefix'], { stdio: 'inherit' })
 }
+
+process.exitCode = result.status

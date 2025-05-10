@@ -1,30 +1,18 @@
-@import '../../styles/styles.sass'
+@use '../../styles/tools'
+@use './variables' as *
 
-.v-date-picker-years
-  font-size: 16px
-  font-weight: 400
-  height: 286px
-  list-style-type: none
-  overflow: auto
-  text-align: center
-
-  &.v-date-picker-years
-    padding: 0
-
-  li
-    cursor: pointer
-    padding: 8px 0
-    transition: none
-
-    &.active
-      font-size: 26px
-      font-weight: 500
-      padding: 10px 0
-
-    &:hover
-      background: rgba(0, 0, 0, 0.12)
-
-.v-picker--landscape
+@include tools.layer('components')
   .v-date-picker-years
-    padding: 0
-    height: 286px
+    height: $date-picker-years-height
+    overflow-y: scroll
+
+  .v-date-picker-years__content
+    display: grid
+    flex: 1 1
+    justify-content: space-around
+    grid-template-columns: repeat(3, 1fr)
+    gap: 8px 24px
+    padding-inline: $date-picker-years-padding-inline
+
+    .v-btn
+      padding-inline: 8px

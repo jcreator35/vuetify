@@ -1,15 +1,17 @@
-// https://github.com/Microsoft/TypeScript/issues/17736
-export {};
+import type { CustomCommands } from './setup/browser-commands.ts'
 
-declare global {
-  namespace jest {
-    interface Matchers<R> {
-      toHaveBeenWarned(): R
-      toHaveBeenTipped(): R
-    }
-  }
+interface CustomMatchers<R = unknown> {
+  toHaveBeenTipped: () => R
+  toHaveBeenWarned: () => R
+  toBeOnScreen: () => Promise<R>
+  toBeDisplayed: () => Promise<R>
 }
 
-declare global {
-  interface KeyboardEventInit { keyCode?: number }
+declare module 'vitest' {
+  interface Assertion<T = any> extends CustomMatchers<T> {}
+  interface AsymmetricMatchersContaining extends CustomMatchers {}
+}
+
+declare module '@vitest/browser/context' {
+  interface BrowserCommands extends CustomCommands {}
 }

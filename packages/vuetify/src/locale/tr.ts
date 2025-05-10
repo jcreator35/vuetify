@@ -1,5 +1,12 @@
 export default {
+  badge: 'Rozet',
+  open: 'Aç',
   close: 'Kapat',
+  dismiss: 'Kapat',
+  confirmEdit: {
+    ok: 'Tamam',
+    cancel: 'İptal',
+  },
   dataIterator: {
     noResultsText: 'Eşleşen veri bulunamadı',
     loadingText: 'Yükleniyor... Lütfen bekleyin.',
@@ -7,9 +14,12 @@ export default {
   dataTable: {
     itemsPerPageText: 'Sayfa başına satır:',
     ariaLabel: {
-      sortDescending: ': Z den A ya sıralı. Sıralamayı kaldırmak için etkinleştir.',
-      sortAscending: ': A dan Z ye sıralı. Z den A ya sıralamak için etkinleştir.',
-      sortNone: ': Sıralı değil. A dan Z ye sıralamak için etkinleştir.',
+      sortDescending: 'Z den A ya sıralı.',
+      sortAscending: 'A dan Z ye sıralı.',
+      sortNone: 'Sıralı değil. ',
+      activateNone: 'Sıralamayı kaldırmak için etkinleştir.',
+      activateDescending: 'Z den A ya sıralamak için etkinleştir.',
+      activateAscending: 'A dan Z ye sıralamak için etkinleştir.',
     },
     sortBy: 'Sırala',
   },
@@ -22,8 +32,20 @@ export default {
     lastPage: 'Son sayfa',
     pageText: '{0} - {1} arası, Toplam: {2} kayıt',
   },
+  dateRangeInput: {
+    divider: 'ile',
+  },
   datePicker: {
-    itemsSelected: '{0} öge seçildi',
+    itemsSelected: '{0} seçildi',
+    range: {
+      title: 'Tarihleri seçin',
+      header: 'Tarihleri girin',
+    },
+    title: 'Tarih seçin',
+    header: 'Tarih girin',
+    input: {
+      placeholder: 'Tarih girin',
+    },
   },
   noDataText: 'Bu görünümde veri yok.',
   carousel: {
@@ -35,13 +57,64 @@ export default {
   },
   calendar: {
     moreEvents: '{0} tane daha',
+    today: 'Bugün',
+  },
+  input: {
+    clear: '{0} temizle',
+    prependAction: '{0} ön işlem',
+    appendAction: '{0} ek işlem',
+    otp: 'Lütfen OTP karakterini girin {0}',
   },
   fileInput: {
     counter: '{0} dosya',
     counterSize: '{0} dosya (toplamda {1})',
   },
+  fileUpload: {
+    title: 'Dosyaları buraya sürükleyip bırakın',
+    divider: 'veya',
+    browse: 'Dosyalara göz at',
+  },
   timePicker: {
-    am: 'AM',
-    pm: 'PM',
+    am: 'ÖÖ',
+    pm: 'ÖS',
+    title: 'Saat seçin',
+  },
+  pagination: {
+    ariaLabel: {
+      root: 'Sayfalandırma Navigasyonu',
+      next: 'Sonraki sayfa',
+      previous: 'Önceki sayfa',
+      page: 'Sayfaya git {0}',
+      currentPage: 'Geçerli Sayfa, Sayfa {0}',
+      first: 'İlk sayfa',
+      last: 'Son sayfa',
+    },
+  },
+  stepper: {
+    next: 'İleri',
+    prev: 'Geri',
+  },
+  rating: {
+    ariaLabel: {
+      item: '{1} üzerinden {0} puan',
+    },
+  },
+  loading: 'Yükleniyor...',
+  infiniteScroll: {
+    loadMore: 'Daha fazla yükle',
+    empty: 'Daha fazla içerik yok',
+  },
+  rules: {
+    required: 'Bu alan zorunludur',
+    email: 'Lütfen geçerli bir e-posta adresi girin',
+    number: 'Bu alan sadece sayılar içerebilir',
+    integer: 'Bu alan sadece tam sayılar içerebilir',
+    capital: 'Bu alan sadece büyük harfler içerebilir',
+    maxLength: 'En fazla {0} karakter girmelisiniz',
+    minLength: 'En az {0} karakter girmelisiniz',
+    strictLength: 'Girilen alanın uzunluğu geçersiz',
+    exclude: '{0} karakteri izin verilmez',
+    notEmpty: 'Lütfen en az bir değer seçin',
+    pattern: 'Geçersiz biçim',
   },
 }

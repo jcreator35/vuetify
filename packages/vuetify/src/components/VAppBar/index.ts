@@ -1,11 +1,3 @@
-import VAppBar from './VAppBar'
-import VAppBarNavIcon from './VAppBarNavIcon'
-
-export { VAppBar, VAppBarNavIcon }
-
-export default {
-  $_vuetify_subcomponents: {
-    VAppBar,
-    VAppBarNavIcon,
-  },
-}
+export { VAppBar } from './VAppBar'
+export { VAppBarNavIcon } from './VAppBarNavIcon'
+export { VAppBarTitle } from './VAppBarTitle'

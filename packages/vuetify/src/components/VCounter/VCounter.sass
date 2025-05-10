@@ -1,11 +1,10 @@
-@import './_variables.scss'
+@use '../../styles/settings'
+@use '../../styles/tools'
+@use './variables' as *
 
-/* Theme */
-+theme(v-counter) using ($material)
-  color: map-deep-get($material, 'text', 'secondary')
-
-.v-counter
-  flex: 0 1 auto
-  font-size: $counter-font-size
-  min-height: $counter-min-height
-  line-height: 1
+@include tools.layer('components')
+  .v-counter
+    color: $counter-color
+    flex: $counter-flex
+    font-size: $counter-font-size
+    transition-duration: $counter-transition-duration

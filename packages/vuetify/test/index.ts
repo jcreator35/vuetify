@@ -1,27 +1,25 @@
-import Vue, { ComponentOptions } from 'vue'
-import { Wrapper } from '@vue/test-utils'
-import toHaveBeenWarnedInit from './util/to-have-been-warned'
+// Utilities
+import './globals.d'
+import { render as _render } from '@testing-library/vue'
+import { createVuetify } from '../src/framework'
+import { mergeDeep } from '../src/util'
+import { aliases } from '../src/iconsets/mdi-svg'
 
-export function functionalContext (context: ComponentOptions<Vue> = {}, children = []) {
-  if (!Array.isArray(children)) children = [children]
-  return {
-    context: {
-      data: {},
-      props: {},
-      ...context,
-    },
-    children,
-  }
-}
+import type { RenderOptions, RenderResult } from '@testing-library/vue'
+import type { VuetifyOptions } from '../src/framework'
 
-export function touch (element: Wrapper<any>) {
+export { userEvent, page, commands } from '@vitest/browser/context'
+export { screen } from '@testing-library/vue'
+export * from './templates'
+
+export function touch (element: Element) {
   const createTrigger = (eventName: string) => (clientX: number, clientY: number) => {
     const touches = [{ clientX, clientY }]
     const event = new Event(eventName)
 
     ;(event as any).touches = touches
     ;(event as any).changedTouches = touches
-    element.element.dispatchEvent(event)
+    element.dispatchEvent(event)
 
     return touch(element)
   }
@@ -33,37 +31,46 @@ export function touch (element: Wrapper<any>) {
   }
 }
 
-export const resizeWindow = (width = window.innerWidth, height = window.innerHeight) => {
-  (window as any).innerWidth = width
-  ;(window as any).innerHeight = height
-  window.dispatchEvent(new Event('resize'))
-  return new Promise(resolve => setTimeout(resolve, 200))
+export const wait = (timeout?: number) => {
+  return new Promise(resolve => setTimeout(resolve, timeout))
 }
 
-export const scrollWindow = (y: number) => {
-  (window as any).pageYOffset = y
-  window.dispatchEvent(new Event('scroll'))
-
-  return new Promise(resolve => setTimeout(resolve, 200))
+export const waitAnimationFrame = () => {
+  return new Promise(resolve => requestAnimationFrame(resolve))
 }
 
-// Add a global mockup for IntersectionObserver
-(global as any).IntersectionObserver = class IntersectionObserver {
-  callback: (entries: any, observer: any) => {}
-
-  constructor (callback, options) {
-    this.callback = callback
-  }
-
-  observe () {
-    this.callback([], this)
-    return null
-  }
-
-  unobserve () {
-    this.callback = undefined
-    return null
-  }
+export const waitIdle = () => {
+  return new Promise(resolve => requestIdleCallback(resolve, { timeout: 500 }))
 }
 
-toHaveBeenWarnedInit()
+export const scroll = (options: ScrollToOptions, el: Element | Window = window) => {
+  return Promise.race([
+    wait(500),
+    new Promise(resolve => {
+      el.addEventListener('scrollend', resolve, { once: true })
+      el.scroll(options)
+    }).then(waitIdle),
+  ])
+}
+
+export function render<C> (
+  component: C,
+  options?: RenderOptions<C> | null,
+  vuetifyOptions?: VuetifyOptions
+): RenderResult {
+  const vuetify = createVuetify(mergeDeep({ icons: { aliases } }, vuetifyOptions))
+
+  const defaultOptions = {
+    global: {
+      stubs: {
+        transition: false,
+        'transition-group': false,
+      },
+      plugins: [vuetify],
+    },
+  }
+
+  const mountOptions = mergeDeep(defaultOptions, options!, (a, b) => a.concat(b))
+
+  return _render(component, mountOptions)
+}

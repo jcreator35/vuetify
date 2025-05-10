@@ -1,30 +1,51 @@
 // Directives
 import Resize from '../'
 
-describe('resize.ts', () => {
+// Utilities
+
+// Types
+import type { Mock } from 'vitest'
+
+const instance = {
+  $: { uid: 1 },
+}
+
+describe('v-resize', () => {
   it('should bind event on inserted', () => {
-    const callback = jest.fn()
-    jest.spyOn(window, 'addEventListener')
-    jest.spyOn(window, 'removeEventListener')
+    const callback = vi.fn()
+
+    vi.spyOn(window, 'addEventListener')
+    vi.spyOn(window, 'removeEventListener')
+
     const el = {}
 
-    Resize.inserted(el as HTMLElement, { value: callback } as any)
-    expect(callback).toHaveBeenCalled()
+    Resize.mounted!(el as HTMLElement, { value: callback, instance } as any)
+    expect(callback).toHaveBeenCalledWith()
     expect(window.addEventListener).toHaveBeenCalledWith('resize', callback, { passive: true })
-    Resize.unbind(el as HTMLElement)
+
+    Resize.unmounted!(el as HTMLElement, { value: callback, instance } as any)
     expect(window.removeEventListener).toHaveBeenCalledWith('resize', callback, { passive: true })
+
+    ;(window.addEventListener as Mock).mockClear()
+    ;(window.removeEventListener as Mock).mockClear()
   })
 
   it('should not run the callback in quiet mode', () => {
-    const callback = jest.fn()
-    jest.spyOn(window, 'addEventListener')
-    jest.spyOn(window, 'removeEventListener')
+    const callback = vi.fn()
+
+    vi.spyOn(window, 'addEventListener')
+    vi.spyOn(window, 'removeEventListener')
+
     const el = {}
 
-    Resize.inserted(el as HTMLElement, { value: callback, modifiers: { quiet: true } } as any)
+    Resize.mounted!(el as HTMLElement, { value: callback, modifiers: { quiet: true }, instance } as any)
     expect(callback).not.toHaveBeenCalled()
     expect(window.addEventListener).toHaveBeenCalledWith('resize', callback, { passive: true })
-    Resize.unbind(el as HTMLElement)
+
+    Resize.unmounted!(el as HTMLElement, { value: callback, modifiers: { quiet: true }, instance } as any)
     expect(window.removeEventListener).toHaveBeenCalledWith('resize', callback, { passive: true })
+
+    ;(window.addEventListener as Mock).mockClear()
+    ;(window.removeEventListener as Mock).mockClear()
   })
 })

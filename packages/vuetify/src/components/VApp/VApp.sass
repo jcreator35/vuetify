@@ -1,43 +1,18 @@
-@import '../../styles/styles.sass'
+@use '../../styles/tools'
+@use './variables' as *
 
-// Theme
-+theme(v-application) using ($material)
-  background: map-get($material, 'background')
-  color: map-deep-get($material, 'text', 'primary')
+@include tools.layer('components')
+  .v-application
+    display: flex
+    background: $application-background
+    color: $application-color
 
-  .text
-    &--primary
-      color: map-deep-get($material, 'text', 'primary') !important
-
-    &--secondary
-      color: map-deep-get($material, 'text', 'secondary') !important
-
-    &--disabled
-      color: map-deep-get($material, 'text', 'disabled') !important
-
-.v-application
-  display: flex
-
-  a
-    cursor: pointer
-
-  &--is-rtl
-    direction: rtl
-
-  &--wrap
-    flex: 1 1 auto
+  .v-application__wrap
     backface-visibility: hidden
     display: flex
     flex-direction: column
-    min-height: 100vh
+    flex: 1 1 auto
     max-width: 100%
+    min-height: 100vh
+    min-height: 100dvh
     position: relative
-
-// Firefox overrides
-@-moz-document url-prefix()
-  @media print
-    .v-application
-      display: block
-
-      &--wrap
-        display: block

@@ -1,53 +1,45 @@
-// Imports
-@import './_variables.scss'
+@use 'sass:map'
+@use '../../styles/settings'
+@use '../../styles/tools'
+@use './variables' as *
 
-// Theme
-+theme(v-icon) using ($material)
-  color: map-deep-get($material, 'icons', 'active')
-
-  &--disabled
-    color: map-deep-get($material, 'icons', 'inactive') !important
-
-// Increased specificity to overwrite
-// iconfont css interference
-.v-icon.v-icon
-  align-items: center
-  display: inline-flex
-  font-feature-settings: 'liga'
-  font-size: $icon-size
-  justify-content: center
-  letter-spacing: normal
-  line-height: 1
-  text-indent: 0
-  transition: $primary-transition, visibility 0s
-  vertical-align: middle
-  user-select: none
-
-  &--dense
-    font-size: $icon-size-dense
-
-.v-icon
-  &--right
-    margin-left: map-get($grid-gutters, 'md')
-  &--left
-    margin-right: map-get($grid-gutters, 'md')
-
-  &.v-icon.v-icon--link
-    cursor: pointer
-
-  &--disabled
-    pointer-events: none
-    opacity: .6
-
-  &--is-component
+@include tools.layer('components')
+  .v-icon
+    --v-icon-size-multiplier: 1
+    align-items: center
+    display: inline-flex
+    font-feature-settings: 'liga'
     height: $icon-size
+    justify-content: center
+    letter-spacing: $icon-letter-spacing
+    line-height: $icon-line-height
+    position: relative
+    opacity: var(--v-icon-opacity, 1)
+    text-indent: $icon-text-indent
+    text-align: center
+    user-select: none
+    vertical-align: $icon-vertical-align
     width: $icon-size
+    min-width: $icon-size
 
-  &--svg
-    height: $icon-size
-    width: $icon-size
+    &--clickable
+      cursor: pointer
+
+    &--disabled
+      pointer-events: none
+      opacity: $icon-disabled-opacity
+
+    @each $name in settings.$sizes
+      &--size-#{$name}
+        font-size: calc(var(--v-icon-size-multiplier) * #{map.get($icon-sizes, $name)})
+
+  .v-icon__svg
     fill: currentColor
+    width: 100%
+    height: 100%
 
-  &--dense
-    &--is-component
-      height: $icon-size-dense
+  .v-icon--start
+    margin-inline-end: $icon-margin-start
+
+  .v-icon--end
+    margin-inline-start: $icon-margin-end

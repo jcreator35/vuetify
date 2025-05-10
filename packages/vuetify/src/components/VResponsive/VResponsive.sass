@@ -1,20 +1,27 @@
-@import '../../styles/styles.sass'
+@use '../../styles/settings'
+@use '../../styles/tools'
 
-.v-responsive
-  position: relative
-  overflow: hidden
-  flex: 1 0 auto
-  max-width: 100%
-  display: flex
-
-  &__sizer
+@include tools.layer('components')
+  .v-responsive
     display: flex
-    transition: padding-top 0.2s map-get($transition, 'swing')
+    flex: 1 0 auto
+    max-height: 100%
+    max-width: 100%
+    overflow: hidden
+    position: relative
 
-  &__content
-    transition: margin-top 0.2s map-get($transition, 'swing')
+    &--inline
+      display: inline-flex
+      flex: 0 0 auto
 
-  &__sizer,
-  &__content
+  .v-responsive__content
     flex: 1 0 0px
     max-width: 100%
+
+  .v-responsive__sizer ~ .v-responsive__content
+    margin-inline-start: -100%
+
+  .v-responsive__sizer
+    flex: 1 0 0px
+    transition: padding-bottom 0.2s settings.$standard-easing
+    pointer-events: none

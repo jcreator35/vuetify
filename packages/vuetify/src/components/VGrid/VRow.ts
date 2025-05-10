@@ -1,38 +1,61 @@
+// Styles
 import './VGrid.sass'
 
-import Vue, { PropOptions } from 'vue'
-import mergeData from '../../util/mergeData'
-import { upperFirst } from '../../util/helpers'
+// Composables
+import { makeComponentProps } from '@/composables/component'
+import { breakpoints } from '@/composables/display'
+import { makeTagProps } from '@/composables/tag'
 
-// no xs
-const breakpoints = ['sm', 'md', 'lg', 'xl']
+// Utilities
+import { capitalize, computed, h } from 'vue'
+import { genericComponent, propsFactory } from '@/util'
 
-const ALIGNMENT = ['start', 'end', 'center']
+// Types
+import type { Prop, PropType } from 'vue'
+import type { Breakpoint } from '@/composables/display'
 
-function makeProps (prefix: string, def: () => PropOptions) {
+const ALIGNMENT = ['start', 'end', 'center'] as const
+
+type BreakpointAlign = `align${Capitalize<Breakpoint>}`
+type BreakpointJustify = `justify${Capitalize<Breakpoint>}`
+type BreakpointAlignContent = `alignContent${Capitalize<Breakpoint>}`
+
+const SPACE = ['space-between', 'space-around', 'space-evenly'] as const
+
+function makeRowProps <
+  Name extends BreakpointAlign | BreakpointJustify | BreakpointAlignContent,
+  Type,
+> (prefix: string, def: () => Prop<Type, null>) {
   return breakpoints.reduce((props, val) => {
-    props[prefix + upperFirst(val)] = def()
+    const prefixKey = prefix + capitalize(val) as Name
+    props[prefixKey] = def()
     return props
-  }, {} as Dictionary<PropOptions>)
+  }, {} as Record<Name, Prop<Type, null>>)
 }
 
-const alignValidator = (str: any) => [...ALIGNMENT, 'baseline', 'stretch'].includes(str)
-const alignProps = makeProps('align', () => ({
-  type: String,
+const ALIGN_VALUES = [...ALIGNMENT, 'baseline', 'stretch'] as const
+type AlignValue = typeof ALIGN_VALUES[number]
+const alignValidator = (str: any) => ALIGN_VALUES.includes(str)
+const alignProps = makeRowProps<BreakpointAlign, AlignValue>('align', () => ({
+  type: String as PropType<AlignValue>,
   default: null,
   validator: alignValidator,
 }))
 
-const justifyValidator = (str: any) => [...ALIGNMENT, 'space-between', 'space-around'].includes(str)
-const justifyProps = makeProps('justify', () => ({
-  type: String,
+const JUSTIFY_VALUES = [...ALIGNMENT, ...SPACE] as const
+type JustifyValue = typeof JUSTIFY_VALUES[number]
+const justifyValidator = (str: any) => JUSTIFY_VALUES.includes(str)
+const justifyProps = makeRowProps<BreakpointJustify, JustifyValue>('justify', () => ({
+  type: String as PropType<JustifyValue>,
   default: null,
   validator: justifyValidator,
 }))
 
-const alignContentValidator = (str: any) => [...ALIGNMENT, 'space-between', 'space-around', 'stretch'].includes(str)
-const alignContentProps = makeProps('alignContent', () => ({
-  type: String,
+const ALIGN_CONTENT_VALUES = [...ALIGNMENT, ...SPACE, 'stretch'] as const
+type AlignContentValue = typeof ALIGN_CONTENT_VALUES[number]
+const alignContentValidator = (str: any) => ALIGN_CONTENT_VALUES.includes(str)
+const alignContentProps = makeRowProps<BreakpointAlignContent, AlignContentValue>('alignContent', () => ({
+  type: String as PropType<AlignContentValue>,
   default: null,
   validator: alignContentValidator,
 }))
@@ -64,47 +87,41 @@ function breakpointClass (type: keyof typeof propMap, prop: string, val: string)
   return className.toLowerCase()
 }
 
-const cache = new Map<string, any[]>()
-
-export default Vue.extend({
-  name: 'v-row',
-  functional: true,
-  props: {
-    tag: {
-      type: String,
-      default: 'div',
-    },
-    dense: Boolean,
-    noGutters: Boolean,
-    align: {
-      type: String,
-      default: null,
-      validator: alignValidator,
-    },
-    ...alignProps,
-    justify: {
-      type: String,
-      default: null,
-      validator: justifyValidator,
-    },
-    ...justifyProps,
-    alignContent: {
-      type: String,
-      default: null,
-      validator: alignContentValidator,
-    },
-    ...alignContentProps,
+export const makeVRowProps = propsFactory({
+  dense: Boolean,
+  noGutters: Boolean,
+  align: {
+    type: String as PropType<typeof ALIGN_VALUES[number]>,
+    default: null,
+    validator: alignValidator,
   },
-  render (h, { props, data, children }) {
-    // Super-fast memoization based on props, 5x faster than JSON.stringify
-    let cacheKey = ''
-    for (const prop in props) {
-      cacheKey += String((props as any)[prop])
-    }
-    let classList = cache.get(cacheKey)
+  ...alignProps,
+  justify: {
+    type: String as PropType<typeof ALIGN_CONTENT_VALUES[number]>,
+    default: null,
+    validator: justifyValidator,
+  },
+  ...justifyProps,
+  alignContent: {
+    type: String as PropType<typeof ALIGN_CONTENT_VALUES[number]>,
+    default: null,
+    validator: alignContentValidator,
+  },
 
-    if (!classList) {
-      classList = []
+  ...alignContentProps,
+  ...makeComponentProps(),
+  ...makeTagProps(),
+}, 'VRow')
+
+export const VRow = genericComponent()({
+  name: 'VRow',
+
+  props: makeVRowProps(),
+
+  setup (props, { slots }) {
+    const classes = computed(() => {
+      const classList: any[] = []
+
       // Loop through `align`, `justify`, `alignContent` breakpoint props
       let type: keyof typeof propMap
       for (type in propMap) {
@@ -116,23 +133,25 @@ export default Vue.extend({
       }
 
       classList.push({
-        'no-gutters': props.noGutters,
-        'row--dense': props.dense,
+        'v-row--no-gutters': props.noGutters,
+        'v-row--dense': props.dense,
         [`align-${props.align}`]: props.align,
         [`justify-${props.justify}`]: props.justify,
         [`align-content-${props.alignContent}`]: props.alignContent,
       })
 
-      cache.set(cacheKey, classList)
-    }
+      return classList
+    })
 
-    return h(
-      props.tag,
-      mergeData(data, {
-        staticClass: 'row',
-        class: classList,
-      }),
-      children
-    )
+    return () => h(props.tag, {
+      class: [
+        'v-row',
+        classes.value,
+        props.class,
+      ],
+      style: props.style,
+    }, slots.default?.())
   },
 })
+
+export type VRow = InstanceType<typeof VRow>

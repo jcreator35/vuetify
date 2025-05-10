@@ -1,121 +1,120 @@
-@import '../../styles/styles.sass'
+@use 'sass:math'
+@use 'sass:selector'
+@use '../../styles/tools'
+@use './variables' as *
 
-/* Theme */
-+theme(v-input) using ($material)
-  &:not(.v-input--is-disabled)
-    input,
-    textarea
-      color: map-deep-get($material, 'text', 'primary')
+@include tools.layer('components')
+  .v-input
+    display: grid
+    flex: $input-flex
+    font-size: $input-font-size
+    font-weight: $input-font-weight
+    line-height: $input-line-height
 
-  input::placeholder,
-  textarea::placeholder
-    color: map-deep-get($material, 'text', 'disabled')
+    &--disabled
+      pointer-events: none
 
-  &--is-disabled
-    .v-label,
-    input,
-    textarea
-      color: map-deep-get($material, 'text', 'disabled')
+    @at-root
+      @include tools.density('v-input', $input-density) using ($modifier)
+        --v-input-control-height: #{$input-control-height + $modifier}
+        --v-input-padding-top: #{16px + $modifier * .5}
 
-.v-input
-  align-items: flex-start
-  display: flex
-  flex: 1 1 auto
-  font-size: 16px
-  letter-spacing: normal
-  max-width: 100%
-  text-align: left
+  .v-input--vertical
+    grid-template-areas: "append" "control" "prepend"
+    grid-template-rows: max-content auto max-content
+    grid-template-columns: min-content
 
-  .v-progress-linear
-    top: calc(100% - 1px)
-    left: 0
+    .v-input__prepend
+      margin-block-start: $input-affix-margin-inside
 
-  input
-    max-height: 32px
+    .v-input__append
+      margin-block-end: $input-affix-margin-inside
 
-  input,
-  textarea
-    // Remove Firefox red outline
-    &:invalid
-      box-shadow: none
+  .v-input--horizontal
+    grid-template-areas: "prepend control append" "a messages b"
+    grid-template-columns: max-content minmax(0, 1fr) max-content
+    grid-template-rows: 1fr auto
 
-    &:focus,
-    &:active
-      outline: none
+    .v-input__prepend
+      margin-inline-end: $input-affix-margin-inside
 
-  .v-label
-    height: 20px
-    line-height: 20px
+    .v-input__append
+      margin-inline-start: $input-affix-margin-inside
 
-  &__append-outer,
-  &__prepend-outer
-    display: inline-flex
-    margin-bottom: 4px
-    margin-top: 4px
-    line-height: 1
-
-    .v-icon
-      user-select: none
-
-  &__append-outer
-    +ltr()
-      margin-left: 9px
-
-    +rtl()
-      margin-right: 9px
-
-  &__prepend-outer
-    +ltr()
-      margin-right: 9px
-
-    +rtl()
-      margin-left: 9px
-
-  &__control
+  .v-input__details
+    align-items: flex-end
     display: flex
-    flex-direction: column
-    height: auto
-    flex-grow: 1
-    flex-wrap: wrap
-    min-width: 0
-    width: 100% // For IE11
+    font-size: $input-details-font-size
+    font-weight: $input-details-font-weight
+    grid-area: messages
+    letter-spacing: $input-details-letter-spacing
+    line-height: $input-details-line-height
+    min-height: $input-details-min-height
+    padding-top: $input-details-padding-above
+    overflow: hidden
+    justify-content: space-between
 
-  &__icon
-    align-items: center
-    display: inline-flex
-    height: 24px
-    flex: 1 0 auto
-    justify-content: center
-    min-width: 24px
-    width: 24px
+  .v-input__details,
+  .v-input__prepend,
+  .v-input__append
+    > .v-icon
+      opacity: var(--v-medium-emphasis-opacity)
 
-    &--clear
-      border-radius: 50%
+    .v-input--disabled &,
+    .v-input--error &
+      > .v-icon,
+      .v-messages
+        opacity: 1
 
-  &__slot
-    align-items: center
-    color: inherit
+    .v-input--glow.v-input--focused &
+      > .v-icon
+        opacity: 1
+
+    .v-input--disabled &
+      opacity: var(--v-disabled-opacity)
+
+    .v-input--error:not(.v-input--disabled) &
+      > .v-icon,
+      .v-messages
+        color: rgb(var(--v-theme-error))
+
+  .v-input__prepend,
+  .v-input__append
     display: flex
-    margin-bottom: 8px
-    min-height: inherit
-    position: relative
-    transition: $primary-transition
-    width: 100%
+    align-items: flex-start
+    padding-top: var(--v-input-padding-top)
 
-  &--dense > .v-input__control > .v-input__slot
-    margin-bottom: 4px
+    .v-input--center-affix &
+      align-items: center
+      padding-top: 0
 
-  &--is-disabled:not(.v-input--is-readonly)
-    pointer-events: none
+  .v-input__prepend
+    grid-area: prepend
 
-  &--is-loading > .v-input__control > .v-input__slot
-    &:before,
-    &:after
-      display: none
+  .v-input__append
+    grid-area: append
 
-  &--hide-details > .v-input__control > .v-input__slot
-    margin-bottom: 0
+  .v-input__control
+    display: flex
+    grid-area: control
 
-  &--has-state
-    &.error--text .v-label
-      animation: v-shake .6s map-get($transition, 'swing')
+  .v-input
+    &--hide-spin-buttons
+      input::-webkit-outer-spin-button,
+      input::-webkit-inner-spin-button
+        -webkit-appearance: none
+        margin: 0
+      input[type=number]
+        -moz-appearance: textfield
+
+    &--plain-underlined
+
+      .v-input__prepend,
+      .v-input__append
+        $this: &
+        align-items: flex-start
+
+        @at-root
+          @include tools.density('v-input', $input-density) using ($modifier)
+            @at-root #{selector.append(&, $this)}
+              padding-top: calc(var(--v-input-padding-top) + #{math.max(0px, 4px + $modifier * .25)})

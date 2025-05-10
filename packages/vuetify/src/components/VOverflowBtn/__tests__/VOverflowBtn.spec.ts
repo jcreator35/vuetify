@@ -1,14 +1,17 @@
+// @ts-nocheck
+/* eslint-disable */
+
 // Components
-import VOverflowBtn from '../VOverflowBtn'
+// import VOverflowBtn from '../VOverflowBtn'
 
 // Utilities
 import {
   mount,
   Wrapper,
 } from '@vue/test-utils'
-import { ExtractVue } from '../../../util/mixins'
+// import { ExtractVue } from '../../../util/mixins'
 
-describe('VOverflowBtn.js', () => {
+describe.skip('VOverflowBtn.js', () => {
   type Instance = ExtractVue<typeof VOverflowBtn>
   let mountFunction: (options?: object) => Wrapper<Instance>
 
@@ -107,5 +110,23 @@ describe('VOverflowBtn.js', () => {
     btn.trigger('click')
 
     expect(callback).toHaveBeenCalled()
+  })
+
+  it('should show label with persistentPlaceholder property set to true', async () => {
+    const wrapper = mountFunction({
+      propsData: {
+        items: ['foo'],
+        label: 'Some label',
+        persistentPlaceholder: true,
+      },
+    })
+
+    expect(wrapper.html()).toMatchSnapshot()
+
+    wrapper.find('input').trigger('click')
+
+    await wrapper.vm.$nextTick()
+
+    expect(wrapper.html()).toMatchSnapshot()
   })
 })

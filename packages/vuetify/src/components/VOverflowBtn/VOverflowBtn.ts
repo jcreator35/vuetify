@@ -1,3 +1,6 @@
+// @ts-nocheck
+/* eslint-disable */
+
 // Styles
 import './VOverflowBtn.sass'
 
@@ -40,6 +43,9 @@ export default VAutocomplete.extend({
     computedItems (): object[] {
       return this.segmented ? this.allItems : this.filteredItems
     },
+    labelValue (): boolean {
+      return (this.isFocused && !this.persistentPlaceholder) || this.isLabelActive
+    },
   },
 
   methods: {
@@ -81,7 +87,7 @@ export default VAutocomplete.extend({
       const itemObj = this.computedItems.find(i => this.getValue(i) === itemValue) || item
 
       if (!itemObj.text || !itemObj.callback) {
-        consoleWarn('When using \'segmented\' prop without a selection slot, items must contain both a text and callback property', this)
+        consoleWarn('When using "segmented" prop without a selection slot, items must contain both a text and callback property', this)
         return null
       }
 
@@ -94,6 +100,13 @@ export default VAutocomplete.extend({
           },
         },
       }, [itemObj.text])
+    },
+    updateValue (val: boolean) {
+      if (val) {
+        this.initialValue = this.lazyValue
+      } else if (this.initialValue !== this.lazyValue) {
+        this.$emit('change', this.lazyValue)
+      }
     },
   },
 })

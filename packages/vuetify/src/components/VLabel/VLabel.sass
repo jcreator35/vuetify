@@ -1,14 +1,19 @@
-@import '../../styles/styles.sass'
+@use '../../styles/settings'
+@use '../../styles/tools'
+@use './variables' as *
 
-// Theme
-+theme(v-label) using ($material)
-  color: map-deep-get($material, 'text', 'secondary')
+@include tools.layer('components')
+  .v-label
+    align-items: center
+    color: $label-color
+    display: $label-display
+    font-size: $label-font-size
+    letter-spacing: $label-letter-spacing
+    min-width: 0
+    opacity: $label-opacity
+    overflow: hidden
+    text-overflow: ellipsis
+    white-space: nowrap
 
-  &--is-disabled
-    color: map-deep-get($material, 'text', 'disabled')
-
-.v-label
-  font-size: 16px
-  line-height: 1
-  min-height: 8px
-  transition: .3s map-get($transition, 'swing')
+  .v-label--clickable
+    cursor: pointer

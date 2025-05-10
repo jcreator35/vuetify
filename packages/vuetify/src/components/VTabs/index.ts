@@ -1,17 +1,4 @@
-import VTabs from './VTabs'
-import VTab from './VTab'
-import VTabsItems from './VTabsItems'
-import VTabItem from './VTabItem'
-import VTabsSlider from './VTabsSlider'
-
-export { VTabs, VTab, VTabItem, VTabsItems, VTabsSlider }
-
-export default {
-  $_vuetify_subcomponents: {
-    VTabs,
-    VTab,
-    VTabsItems,
-    VTabItem,
-    VTabsSlider,
-  },
-}
+export { VTab } from './VTab'
+export { VTabs } from './VTabs'
+export { VTabsWindow } from './VTabsWindow'
+export { VTabsWindowItem } from './VTabsWindowItem'

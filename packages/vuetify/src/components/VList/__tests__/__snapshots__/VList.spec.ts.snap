@@ -1,36 +1,3 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`VList.ts should render a dense component and match snapshot 1`] = `
-<div role="list"
-     class="v-list v-sheet v-sheet--tile theme--light v-list--dense"
->
-</div>
-`;
-
-exports[`VList.ts should render a subheader component and match snapshot 1`] = `
-<div role="list"
-     class="v-list v-sheet v-sheet--tile theme--light v-list--subheader"
->
-</div>
-`;
-
-exports[`VList.ts should render a threeLine component and match snapshot 1`] = `
-<div role="list"
-     class="v-list v-sheet v-sheet--tile theme--light v-list--three-line"
->
-</div>
-`;
-
-exports[`VList.ts should render a twoLine component and match snapshot 1`] = `
-<div role="list"
-     class="v-list v-sheet v-sheet--tile theme--light v-list--two-line"
->
-</div>
-`;
-
-exports[`VList.ts should render component and match snapshot 1`] = `
-<div role="list"
-     class="v-list v-sheet v-sheet--tile theme--light"
->
-</div>
-`;
+exports[`VList > should match a snapshot 1`] = `"<div class="v-list v-theme--light v-list--density-default v-list--one-line" tabindex="0" role="listbox"></div>"`;

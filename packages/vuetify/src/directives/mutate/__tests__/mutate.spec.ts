@@ -1,18 +1,22 @@
 // Directives
-import Mutate from '../'
+import Mutate from '..'
+
+// Utilities
+
+// Utilities
 
 (global as any).MutationObserver = class { // Mock MutationObserver
   _callback: Function
 
-  _observe = jest.fn()
+  _observe = vi.fn()
 
-  constructor (callback) {
+  constructor (callback: () => {}) {
     this._callback = callback
   }
 
   disconnect () {}
 
-  observe (_, options) {
+  observe (_: any, options = {}) {
     this._observe(options)
   }
 
@@ -21,14 +25,20 @@ import Mutate from '../'
   }
 }
 
-describe('mutate.ts', () => {
-  it('should bind event on inserted', () => {
-    const callback = jest.fn()
-    const el = document.createElement('div') as any
+const instance = {
+  $: { uid: 1 },
+}
+
+describe('v-mutate', () => {
+  it('should bind event on mounted', () => {
+    const callback = vi.fn()
+    const el = document.createElement('div')
     document.body.appendChild(el)
 
-    Mutate.inserted(el, {
+    Mutate.mounted(el, {
       value: callback,
+      modifiers: {},
+      instance,
     } as any)
 
     expect(el._mutate).toBeTruthy()
@@ -36,95 +46,48 @@ describe('mutate.ts', () => {
 
     document.body.removeChild(el)
 
-    Mutate.unbind(el)
+    Mutate.unmounted(el, { instance } as any)
 
-    expect(el._mutate).toBeFalsy()
+    expect(el._mutate![1]).toBeUndefined()
   })
 
-  it('should fire event on mutation', () => {
-    const callback = jest.fn()
-    const el = document.createElement('div') as any
+  it('should invoke callback once and then unmount', async () => {
+    const callback = vi.fn()
+    const el = document.createElement('div')
     document.body.appendChild(el)
 
-    Mutate.inserted(el, {
+    Mutate.mounted(el, {
       value: callback,
+      modifiers: { once: true },
+      instance,
     } as any)
 
-    el._mutate.observer.trigger([{}])
+    expect(callback).not.toHaveBeenCalled()
+    expect(el._mutate).toBeTruthy()
+
+    ;(el._mutate![1]!.observer as any)?.trigger([])
 
     expect(callback).toHaveBeenCalledTimes(1)
-
-    document.body.removeChild(el)
-
-    Mutate.unbind(el)
+    expect(el._mutate![1]).toBeUndefined()
   })
 
-  it('should fire event once', () => {
-    const callback = jest.fn()
-    const el = document.createElement('div') as any
+  it('should invoke callback on mount, on mutation and then unmount', async () => {
+    const callback = vi.fn()
+    const el = document.createElement('div')
     document.body.appendChild(el)
 
-    Mutate.inserted(el, {
+    Mutate.mounted(el, {
       value: callback,
-      modifiers: {
-        once: true,
-      },
+      modifiers: { immediate: true, once: true },
+      instance,
     } as any)
 
-    el._mutate.observer.trigger([{}])
-
     expect(callback).toHaveBeenCalledTimes(1)
-    expect(el._mutate).toBeFalsy()
+    expect(el._mutate).toBeTruthy()
 
-    document.body.removeChild(el)
-  })
+    ;(el._mutate![1]!.observer as any)?.trigger([])
 
-  it('should work with object value', () => {
-    const callback = jest.fn()
-    const el = document.createElement('div') as any
-    document.body.appendChild(el)
-
-    Mutate.inserted(el, {
-      value: {
-        options: {
-          attributes: false,
-          subtree: true,
-        },
-        handler: callback,
-      },
-    } as any)
-
-    el._mutate.observer.trigger([{}])
-
-    expect(callback).toHaveBeenCalledTimes(1)
-    expect(el._mutate.observer._observe).toHaveBeenLastCalledWith({ attributes: false, subtree: true })
-
-    document.body.removeChild(el)
-
-    Mutate.unbind(el)
-  })
-
-  it('should work with observer modifiers', () => {
-    const callback = jest.fn()
-    const el = document.createElement('div') as any
-    document.body.appendChild(el)
-
-    Mutate.inserted(el, {
-      value: callback,
-      modifiers: {
-        attr: true,
-        child: true,
-        sub: true,
-      },
-    } as any)
-
-    el._mutate.observer.trigger([{}])
-
-    expect(callback).toHaveBeenCalledTimes(1)
-    expect(el._mutate.observer._observe).toHaveBeenLastCalledWith({ attributes: true, childList: true, subtree: true })
-
-    document.body.removeChild(el)
-
-    Mutate.unbind(el)
+    expect(callback).toHaveBeenCalledTimes(2)
+    expect(el._mutate![1]).toBeUndefined()
   })
 })

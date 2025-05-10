@@ -1,6 +1,12 @@
-@import './_variables.scss'
+@use 'sass:map'
+@use '../../styles/settings'
+@use '../../styles/tools'
+@use './variables' as *
 
-.v-input--checkbox
-  &.v-input--indeterminate
-    &.v-input--is-disabled
-      opacity: $checkbox-disabled-opacity
+@include tools.layer('components')
+  .v-checkbox
+    &.v-input
+      flex: $checkbox-flex
+
+    .v-selection-control
+      min-height: var(--v-input-control-height)

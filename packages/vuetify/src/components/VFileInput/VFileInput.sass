@@ -1,41 +1,42 @@
-@import '../../styles/styles.sass'
+@use './variables' as *
+@use '../../styles/tools'
+@use 'sass:math'
+@use 'sass:selector'
 
-+theme(v-file-input) using ($material)
-  .v-file-input__text
-    color: map-deep-get($material, 'text', 'primary')
+@include tools.layer('components')
+  .v-file-input
+    &--hide.v-input
+      .v-field,
+      .v-input__control,
+      .v-input__details
+        display: none
 
-    &--placeholder
-      color: map-deep-get($material, 'text', 'secondary')
+      .v-input__prepend
+        grid-area: control
+        margin: 0 auto
 
-// Block
-.v-file-input
-  input[type="file"]
-    opacity: 0
-    max-width: 0
-    width: 0
+    &--chips.v-input--density-compact
+      .v-field--variant-solo,
+      .v-field--variant-solo-inverted,
+      .v-field--variant-filled,
+      .v-field--variant-solo-filled
+        .v-label.v-field-label
+          &--floating
+            top: 0px
 
-// Element
-.v-file-input .v-file-input__text
-  align-items: center
-  align-self: stretch
-  display: flex
-  flex-wrap: wrap
-  width: 100%
+    input[type="file"]
+      height: 100%
+      left: 0
+      opacity: 0
+      position: absolute
+      top: 0
+      width: 100%
+      z-index: 0
 
-  &.v-file-input__text--chips
-    flex-wrap: wrap
+    &--dragging input[type="file"]
+      z-index: 1
 
-  .v-chip
-    margin: 4px
-
-.v-file-input.v-text-field--filled:not(.v-text-field--single-line)
-  .v-file-input__text
-    padding-top: 22px
-
-.v-file-input.v-text-field--outlined
-  .v-text-field__slot
-    padding: 6px 0
-
-  &.v-input--dense
-    .v-text-field__slot
-      padding: 3px 0
+    .v-input__details
+      padding-inline: $file-input-details-padding-inline
+      @at-root #{selector.append('.v-input--plain-underlined', &)}
+        padding-inline: 0

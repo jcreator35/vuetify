@@ -1,5 +1,12 @@
 export default {
+  badge: 'Bedž',
+  open: 'Otvori',
   close: 'Zatvori',
+  dismiss: 'Odbaci',
+  confirmEdit: {
+    ok: 'OK',
+    cancel: 'Odustani',
+  },
   dataIterator: {
     noResultsText: 'Nisu pronađene odgovarajuće stavke',
     loadingText: 'Učitavanje...',
@@ -7,9 +14,12 @@ export default {
   dataTable: {
     itemsPerPageText: 'Redaka po stranici:',
     ariaLabel: {
-      sortDescending: ': Sortirano silazno. Odaberite za uklanjanje sortiranja.',
-      sortAscending: ': Sortirano uzlazno. Odaberite za silazno sortiranje.',
-      sortNone: ': Nije sortirano. Odaberite za uzlazno sortiranje.',
+      sortDescending: 'Sortirano silazno.',
+      sortAscending: 'Sortirano uzlazno.',
+      sortNone: 'Nije sortirano.',
+      activateNone: 'Odaberite za uklanjanje sortiranja.',
+      activateDescending: 'Odaberite za silazno sortiranje.',
+      activateAscending: 'Odaberite za uzlazno sortiranje.',
     },
     sortBy: 'Sortirajte po',
   },
@@ -22,26 +32,89 @@ export default {
     lastPage: 'Posljednja stranica',
     pageText: '{0}-{1} od {2}',
   },
+  dateRangeInput: {
+    divider: 'do',
+  },
   datePicker: {
     itemsSelected: '{0} odabrano',
+    range: {
+      title: 'Odaberite datume',
+      header: 'Unesite datume',
+    },
+    title: 'Odaberite datum',
+    header: 'Unesite datum',
+    input: {
+      placeholder: 'Unesite datum',
+    },
   },
   noDataText: 'Nema dostupnih podataka',
   carousel: {
     prev: 'Prethodno',
     next: 'Sljedeće',
     ariaLabel: {
-      delimiter: 'Carousel slide {0} of {1}',
+      delimiter: 'Slajd {0} od {1}',
     },
   },
   calendar: {
     moreEvents: 'Još {0}',
+    today: 'Danas',
+  },
+  input: {
+    clear: 'Očisti {0}',
+    prependAction: '{0} prethodna radnja',
+    appendAction: '{0} dodana radnja',
+    otp: 'Unesite OTP znak {0}',
   },
   fileInput: {
     counter: 'Odabranih datoteka: {0}',
     counterSize: 'Odabranih datoteka: {0} ({1} ukupno)',
   },
+  fileUpload: {
+    title: 'Povucite i ispustite datoteke ovdje',
+    divider: 'ili',
+    browse: 'Pregledaj datoteke',
+  },
   timePicker: {
     am: 'AM',
     pm: 'PM',
+    title: 'Odaberite vrijeme',
+  },
+  pagination: {
+    ariaLabel: {
+      root: 'Navigacija stranicama',
+      next: 'Sljedeća stranica',
+      previous: 'Prethodna stranica',
+      page: 'Idi na stranicu {0}',
+      currentPage: 'Trenutna stranica, stranica {0}',
+      first: 'Prva stranica',
+      last: 'Posljednja stranica',
+    },
+  },
+  stepper: {
+    next: 'Sljedeće',
+    prev: 'Prethodno',
+  },
+  rating: {
+    ariaLabel: {
+      item: 'Ocjena {0} od {1}',
+    },
+  },
+  loading: 'Učitavanje...',
+  infiniteScroll: {
+    loadMore: 'Učitaj više',
+    empty: 'Nema više',
+  },
+  rules: {
+    required: 'Ovo polje je obavezno',
+    email: 'Unesite valjanu e-mail adresu',
+    number: 'Ovo polje može sadržavati samo brojeve',
+    integer: 'Ovo polje može sadržavati samo cijele brojeve',
+    capital: 'Ovo polje može sadržavati samo velika slova',
+    maxLength: 'Morate unijeti najviše {0} znakova',
+    minLength: 'Morate unijeti najmanje {0} znakova',
+    strictLength: 'Duljina unesenog polja nije valjana',
+    exclude: 'Znak {0} nije dopušten',
+    notEmpty: 'Odaberite barem jednu vrijednost',
+    pattern: 'Nevaljan format',
   },
 }

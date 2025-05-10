@@ -1,258 +1,335 @@
-@import './_variables.scss'
+@use 'sass:list'
+@use 'sass:map'
+@use 'sass:math'
+@use '../../styles/settings'
+@use '../../styles/tools'
+@use './variables' as *
 
-// Theme
-+theme(v-list-item) using ($material)
-  &--disabled
-    color: map-deep-get($material, 'text', 'disabled')
+@include tools.layer('components')
+  .v-list-item
+    align-items: center
+    display: grid
+    flex: none
+    grid-template-areas: "prepend content append"
+    grid-template-columns: max-content 1fr auto
+    outline: none
+    max-width: 100%
+    padding: $list-item-padding
+    position: relative
+    text-decoration: none
 
-  &:not(.v-list-item--active):not(.v-list-item--disabled)
-    color: map-deep-get($material, 'text', 'primary') !important
+    @include tools.border($list-item-border...)
+    @include tools.states('.v-list-item__overlay')
+    @include tools.rounded($list-item-border-radius)
+    @include tools.variant($list-item-variants...)
 
-  .v-list-item__mask
-    color: map-deep-get($material, 'text', 'disabled')
-    background: map-deep-get($material, 'expansion-panels', 'focus')
+    @supports selector(:focus-visible)
+      &::after
+        pointer-events: none
+        border: 2px solid currentColor
+        border-radius: 4px
+        opacity: 0
+        transition: opacity .2s ease-in-out
+        @include tools.absolute(true)
 
-  .v-list-item__subtitle,
-  .v-list-item__action-text
-    color: map-deep-get($material, 'text', 'secondary')
+      &:focus-visible::after
+        opacity: calc(.15 * var(--v-theme-overlay-multiplier))
 
-  +states($material)
+    &__prepend,
+    &__append
+      > .v-badge .v-icon,
+      > .v-icon
+        opacity: #{$list-item-icon-opacity}
 
-  &.v-list-item--highlighted
-    &::before
-      opacity: map-deep-get($material, 'states', 'pressed')
+    &--active
+      .v-list-item__prepend,
+      .v-list-item__append
+        > .v-badge .v-icon,
+        > .v-icon
+          opacity: #{$list-item-icon-active-opacity}
 
-// Block
-.v-list-item
-  align-items: center
-  display: flex
-  flex: 1 1 100%
-  letter-spacing: normal
-  min-height: $list-item-min-height
-  outline: none
-  padding: 0 16px
-  position: relative
-  text-decoration: none
+      &:not(.v-list-item--link)
+        .v-list-item__overlay
+          opacity: calc(#{map.get(settings.$states, 'activated')} * var(--v-theme-overlay-multiplier))
 
-  &--disabled
-    pointer-events: none
+    &--rounded
+      @include tools.rounded($list-item-rounded-border-radius)
 
-  &--selectable
-    user-select: auto
+    &--disabled
+      pointer-events: none
+      user-select: none
+      opacity: $list-disabled-opacity
 
-// Element
-.v-list-item__action
-  align-self: center
-  margin: 12px 0
+    &--link
+      cursor: pointer
 
-  // Remove all margins when used
-  // in an item action. If user
-  // wants this they can not
-  // use this component
-  .v-input,
-  .v-input__control,
-  .v-input__slot,
-  .v-input--selection-controls__input
-    margin: 0 !important
+    .v-navigation-drawer--rail:not(.v-navigation-drawer--expand-on-hover) &,
+    .v-navigation-drawer--rail.v-navigation-drawer--expand-on-hover:not(.v-navigation-drawer--is-hovering) &
+      .v-avatar
+        --v-avatar-height: 24px
 
-  .v-input
-    padding: 0
+  .v-list-item__prepend
+    align-items: center
+    align-self: center
+    display: flex
+    grid-area: prepend
 
-    .v-messages
-      display: none
+    > .v-badge,
+    > .v-icon,
+    > .v-tooltip
+      ~ .v-list-item__spacer
+        width: $list-item-icon-margin-start
 
-.v-list-item__action-text
-  font-size: map-deep-get($headings, 'caption', 'size')
+    > .v-avatar,
+    > .v-badge:is(:has(.v-avatar))
+      ~ .v-list-item__spacer
+        width: $list-item-avatar-margin-start
 
-.v-list-item__avatar
-  align-self: center
-  justify-content: flex-start
-  margin-bottom: $list-item-avatar-margin-y
-  margin-top: $list-item-avatar-margin-y
 
-  &.v-list-item__avatar--horizontal
-    margin-bottom: 8px
-    margin-top: 8px
+    .v-list-item--slim &
+      > .v-badge,
+      > .v-icon,
+      > .v-tooltip
+        ~ .v-list-item__spacer
+          width: $list-item-slim-spacer-width
 
-    &:first-child
-      +ltr()
-        margin-left: $list-item-avatar-horizontal-margin-x
+      > .v-avatar,
+      > .v-badge:is(:has(.v-avatar))
+        ~ .v-list-item__spacer
+          width: $list-item-slim-avatar-spacer-width
 
-      +rtl()
-        margin-right: $list-item-avatar-horizontal-margin-x
+      > .v-list-item-action ~ .v-list-item__spacer
+        width: $list-item-slim-action-spacer-width
 
-    &:last-child
-      +ltr()
-        margin-left: $list-item-avatar-horizontal-margin-x
+    .v-list-item--three-line &
+      align-self: start
 
-      +rtl()
-        margin-right: $list-item-avatar-horizontal-margin-x
+  .v-list-item__append
+    align-self: center
+    display: flex
+    align-items: center
+    grid-area: append
 
-.v-list-item__content
-  align-items: center
-  align-self: center
-  display: flex
-  flex-wrap: wrap
-  flex: 1 1
-  overflow: hidden
-  padding: 12px 0
+    .v-list-item__spacer
+      order: -1
+      transition: 150ms width settings.$standard-easing
 
-  > *
-    line-height: 1.1
-    flex: 1 0 100%
+    > .v-badge,
+    > .v-icon,
+    > .v-tooltip
+      ~ .v-list-item__spacer
+        width: $list-item-icon-margin-end
 
-    &:not(:last-child)
-      margin-bottom: 2px
+    > .v-avatar,
+    > .v-badge:is(:has(.v-avatar))
+      ~ .v-list-item__spacer
+        width: $list-item-avatar-margin-end
 
-.v-list-item__icon
-  align-self: flex-start
-  margin: 16px 0
+    > .v-list-item-action ~ .v-list-item__spacer
+      width: $list-item-action-spacer-width
 
-// https://github.com/vuetifyjs/vuetify/issues/7930
-.v-list-item__action,
-.v-list-item__avatar,
-.v-list-item__icon
-  &:last-of-type:not(:only-child)
-    +ltr()
-      margin-left: 16px
+    .v-list-item--slim &
+      > .v-badge,
+      > .v-icon,
+      > .v-tooltip
+        ~ .v-list-item__spacer
+          width: $list-item-slim-spacer-width
 
-    +rtl()
-      margin-right: 16px
+      > .v-avatar,
+      > .v-badge:is(:has(.v-avatar))
+        ~ .v-list-item__spacer
+          width: $list-item-slim-avatar-spacer-width
 
-.v-list-item__avatar
-  &:first-child
-    +ltr()
-      margin-right: 24px
+      > .v-list-item-action ~ .v-list-item__spacer
+        width: $list-item-slim-action-spacer-width
 
-    +rtl()
-      margin-left: 24px
-
-.v-list-item__action,
-.v-list-item__icon
-  &:first-child
-    +ltr()
-      margin-right: 32px
-
-    +rtl()
-      margin-left: 32px
-
-.v-list-item__action,
-.v-list-item__avatar,
-.v-list-item__icon
-  display: inline-flex
-  min-width: 24px
-
-// Increased specificity to beat
-// out default typography rules
-// line height plays a role in
-// proper element sizing
-.v-list-item .v-list-item__title,
-.v-list-item .v-list-item__subtitle
-  line-height: 1.2
-
-.v-list-item__title,
-.v-list-item__subtitle
-  flex: 1 1 100%
-  overflow: hidden
-  text-overflow: ellipsis
-  white-space: nowrap
-
-.v-list-item__title
-  align-self: center
-  font-size: $list-item-title-font-size
-
-  > .v-badge
-    margin-top: 16px
-
-.v-list-item__subtitle
-  font-size: $list-item-subtitle-font-size
-
-// Modifier
-.v-list-item--dense,
-.v-list--dense .v-list-item
-  min-height: 40px
-
-  .v-list-item__icon
-    height: 24px
-    margin-top: 8px
-    margin-bottom: 8px
+    .v-list-item--three-line &
+      align-self: start
 
   .v-list-item__content
-    padding: 8px 0
+    align-self: center
+    grid-area: content
+    overflow: hidden
 
-  .v-list-item__title,
-  .v-list-item__subtitle
-    font-size: $list-item-dense-title-font-size
-    font-weight: $list-item-dense-title-font-weight
-    line-height: 1rem
+  .v-list-item-action
+    align-self: center
+    display: flex
+    align-items: center
+    flex: none
+    transition: inherit
+    transition-property: height, width
 
-  &.v-list-item--two-line
-    min-height: 60px
+    &--start
+      margin-inline-end: $list-item-action-margin-end
+      margin-inline-start: -$list-item-action-margin-start
 
-  &.v-list-item--three-line
-    min-height: 76px
+    &--end
+      margin-inline-start: $list-item-action-margin-start
+      margin-inline-end: -$list-item-action-margin-end
 
-.v-list-item--link
-  cursor: pointer
-  user-select: none
+  .v-list-item-media
+    margin-top: $list-item-media-margin-top
+    margin-bottom: $list-item-media-margin-bottom
 
-  &:before
+    &--start
+      margin-inline-end: $list-item-media-margin-end
+
+    &--end
+      margin-inline-start: $list-item-media-margin-start
+
+    .v-list-item--two-line &
+      margin-top: $list-item-media-two-line-margin-top
+      margin-bottom: $list-item-media-two-line-margin-bottom
+
+    .v-list-item--three-line &
+      margin-top: $list-item-media-three-line-margin-top
+      margin-bottom: $list-item-media-three-line-margin-bottom
+
+  .v-list-item-subtitle
+    -webkit-box-orient: vertical
+    display: -webkit-box
+    opacity: $list-item-subtitle-opacity
+    overflow: hidden
+    padding: $list-item-subtitle-padding
+    text-overflow: ellipsis
+    overflow-wrap: $list-item-subtitle-overflow-wrap
+    word-break: $list-item-subtitle-word-break
+
+    .v-list-item--one-line &
+      -webkit-line-clamp: 1
+
+    .v-list-item--two-line &
+      -webkit-line-clamp: 2
+
+    .v-list-item--three-line &
+      -webkit-line-clamp: 3
+
+    @include tools.typography($list-item-subtitle-typography...)
+
+    .v-list-item--nav &
+      @include tools.typography($list-item-nav-subtitle-typography...)
+
+  .v-list-item-title
+    hyphens: $list-item-title-hyphens
+    overflow-wrap: $list-item-title-overflow-wrap
+    overflow: hidden
+    padding: $list-item-title-padding
+    white-space: nowrap
+    text-overflow: ellipsis
+    word-break: $list-item-title-word-break
+    word-wrap: $list-item-title-word-wrap
+
+    @include tools.typography($list-item-title-typography...)
+
+    .v-list-item--nav &
+      @include tools.typography($list-item-nav-title-typography...)
+
+  .v-list-item
+    @at-root
+      @include tools.density('v-list-item', $list-density) using ($modifier)
+        min-height: $list-item-min-height + $modifier
+
+        &.v-list-item--one-line
+          $one-line-padding: (list.nth($list-item-padding, 1) + $modifier)
+
+          min-height: $list-item-one-line-min-height + $modifier
+
+          @if ($one-line-padding > 0)
+            padding-top: $one-line-padding
+            padding-bottom: $one-line-padding
+
+        &.v-list-item--two-line
+          $two-line-padding: (list.nth($list-item-two-line-padding, 1) + $modifier)
+
+          min-height: $list-item-two-line-min-height + $modifier
+
+          @if ($two-line-padding > 0)
+            padding-top: $two-line-padding
+            padding-bottom: $two-line-padding
+
+        &.v-list-item--three-line
+          $three-line-padding: (list.nth($list-item-three-line-padding, 1) + $modifier)
+
+          min-height: $list-item-three-line-min-height + $modifier
+
+          @if ($three-line-padding > 0)
+            padding-top: $three-line-padding
+            padding-bottom: $three-line-padding
+
+            .v-list-item__prepend,
+            .v-list-item__append
+              padding-top: math.div($three-line-padding, 2)
+
+        &:not(.v-list-item--nav)
+          &.v-list-item--one-line
+            padding-inline: list.nth($list-item-padding, 2)
+
+          &.v-list-item--two-line
+            padding-inline: list.nth($list-item-two-line-padding, 2)
+
+          &.v-list-item--three-line
+            padding-inline: list.nth($list-item-three-line-padding, 2)
+
+    &--nav
+      padding-inline: $list-nav-padding
+
+      .v-list &
+        &:not(:only-child)
+          margin-bottom: $list-item-nav-margin-top
+
+  .v-list-item__underlay
+    position: absolute
+
+  .v-list-item__overlay
     background-color: currentColor
+    border-radius: inherit
     bottom: 0
-    content: ''
     left: 0
     opacity: 0
     pointer-events: none
     position: absolute
     right: 0
     top: 0
-    transition: $primary-transition
+    transition: opacity 0.2s ease-in-out
 
-// https://github.com/vuetifyjs/vuetify/issues/8327
-.v-list .v-list-item--active
-  color: inherit
+    .v-list-item--active.v-list-item--variant-elevated &
+      --v-theme-overlay-multiplier: 0
 
-  .v-icon
-    color: inherit
+  $base-padding: list.nth($list-item-padding, 2)
+  .v-list
+    --indent-padding: 0px
 
-.v-list-item__action--stack
-  align-items: flex-end
-  align-self: stretch
-  justify-content: space-between
-  white-space: nowrap
-  flex-direction: column
+    &--nav
+      --indent-padding: -#{$list-nav-padding}
 
-.v-list--two-line .v-list-item,
-.v-list--three-line .v-list-item,
-.v-list-item--two-line,
-.v-list-item--three-line
-  .v-list-item__avatar:not(.v-list-item__avatar--horizontal),
-  .v-list-item__icon
-    margin-bottom: $list-item-icon-margin-y
-    margin-top: $list-item-icon-margin-y
+  .v-list-group
+    --list-indent-size: #{$list-indent-size}
+    --parent-padding: var(--indent-padding)
+    --prepend-width: #{$list-item-prepend-size}
 
-.v-list--two-line .v-list-item,
-.v-list-item--two-line
-  min-height: $list-item-two-line-min-height
+    .v-list--slim &
+      --prepend-width: #{$list-item-slim-prepend-size}
 
-  .v-list-item__icon
-    margin-bottom: 32px
+    &--fluid
+      --list-indent-size: 0px
 
-.v-list--three-line .v-list-item,
-.v-list-item--three-line
-  min-height: $list-item-three-line-min-height
+    &--prepend
+      --parent-padding: calc(var(--indent-padding) + var(--prepend-width))
 
-  .v-list-item__avatar,
-  .v-list-item__action
-    align-self: flex-start
-    margin-top: 16px
-    margin-bottom: 16px
+    &--fluid.v-list-group--prepend
+      --parent-padding: var(--indent-padding)
 
-  .v-list-item__content
-    align-self: stretch
+  .v-list-group__items
+    --indent-padding: calc(var(--parent-padding) + var(--list-indent-size))
 
-  .v-list-item__subtitle
-    white-space: initial
-    -webkit-line-clamp: 2
-    -webkit-box-orient: vertical
-    display: -webkit-box
+  .v-list-group__items .v-list-item
+    padding-inline-start: calc(#{$base-padding} + var(--indent-padding)) !important
+
+  .v-list-group__header:not(.v-treeview-item--activatable-group-activator).v-list-item--active
+    &:not(:focus-visible)
+      .v-list-item__overlay
+        opacity: 0
+
+    &:hover
+      .v-list-item__overlay
+        opacity: calc(#{map.get(settings.$states, 'hover')} * var(--v-theme-overlay-multiplier))

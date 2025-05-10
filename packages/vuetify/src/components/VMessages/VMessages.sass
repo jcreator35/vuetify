@@ -1,25 +1,20 @@
-@import '../../styles/styles.sass'
+@use '../../styles/settings'
+@use '../../styles/tools'
+@use './variables' as *
 
-/* Theme */
-+theme(v-messages) using ($material)
-  color: map-deep-get($material, 'text', 'secondary')
+@include tools.layer('components')
+  .v-messages
+    flex: 1 1 auto
+    font-size: $messages-font-size
+    min-height: $messages-min-height
+    min-width: 1px // Ensure takes up space with no messages and inside of flex
+    opacity: var(--v-medium-emphasis-opacity)
+    position: relative
 
-.v-messages
-  flex: 1 1 auto
-  font-size: 12px
-  min-height: 14px
-  min-width: 1px // Ensure takes up space with no messages and inside of flex
-  position: relative
-
-  +ltr()
-    text-align: left
-
-  +rtl()
-    text-align: right
-
-  &__message
-    line-height: normal
-    word-break: break-word
-    overflow-wrap: break-word
-    word-wrap: break-word
-    hyphens: auto
+    &__message
+      line-height: $messages-line-height
+      word-break: break-word
+      overflow-wrap: break-word
+      word-wrap: break-word
+      hyphens: auto
+      transition-duration: $messages-transition-duration

@@ -1,14 +1,13 @@
-const spawn = require('cross-spawn')
+import { spawn } from 'cross-spawn'
 
 let target = process.argv[2]
 const alias = {
   docs: 'vuetifyjs.com',
-  kitchen: '@vuetify/kitchen',
 }
 target = alias[target] || target
 
 if (!target) {
-  spawn('yarn', ['lerna', 'run', 'dev', '--scope', 'vuetify', '--stream'], { stdio: 'inherit' })
+  spawn('pnpm', ['lerna', 'run', 'dev', '--scope', 'vuetify', '--stream'], { stdio: 'inherit' })
 } else {
-  spawn('yarn', ['lerna', 'run', 'dev', '--scope', target, '--stream'], { stdio: 'inherit' })
+  spawn('pnpm', ['lerna', 'run', 'dev', '--scope', target, '--stream'], { stdio: 'inherit' })
 }
